@@ -15,10 +15,9 @@ my_url = 'https://coinmarketcap.com/all'
 
 #check first if there is response from the server
 #because there are a lot of blocks from this server
-#i also put "sleep for 1" sec to noy ger banned.
+#i also put "sleep for 1" second to not get banned.
 response = my_session.get(my_url, headers=headers, cookies=cookies)
 print(response.status_code)
-
 
 #from urllib.request import Request, urlopen
 #req = Request('https://coinmarketcap.com/', headers=headers)
@@ -47,47 +46,41 @@ def trade_spider(max_pages, choose, limit_price=3):
 
 
 def get_single_item_data1(item_url):
+    save_file = open('MineableOnly.txt','a')
     source_code = requests.get(item_url)
     plain_text = source_code.text
     soup = BeautifulSoup(plain_text, 'html.parser')
     for link in soup.find_all('span', {'class': 'label label-warning'}):
         name = link.string
         if name == 'Mineable':
-            print(item_url)
-            #print(name)
-
+            save_file.write(str(item_url) + "\n")
+    save_file.close()
 
 
 def get_single_item_data2(item_url, limit_price):
+    save_file = open('LimitPrice.txt','a')
     source_code = requests.get(item_url)
     plain_text = source_code.text
     soup = BeautifulSoup(plain_text, 'html.parser')
-
     for link in soup.find_all('span', {'id': 'quote_price'}):
         usd = float(link.get('data-usd'))
         if usd < float(limit_price):
-            print(item_url)
-        else:
-            print('')
-
+            save_file.write(str(item_url) + "\n")
+    save_file.close()
 
 def get_single_item_data3(item_url, limit_price):
+    save_file = open('LimitPriceJOINMinable.txt','a')
     source_code = requests.get(item_url)
     plain_text = source_code.text
     soup = BeautifulSoup(plain_text, 'html.parser')
     for link in soup.find_all('span', {'class': 'label label-warning'}):
         name = link.string
         if name == 'Mineable':
-            #print(item_url)
-            print(name)
             for link2 in soup.find_all('span', {'id': 'quote_price'}):
                 usd = float(link2.get('data-usd'))
                 if usd < float(limit_price):
-                    print(item_url)
-                else:
-                    print('')
-
-
+                    save_file.write(str(item_url) + "\n")
+    save_file.close()
 
 
 pages = input('Choose number of pages to CRAWL: ')
